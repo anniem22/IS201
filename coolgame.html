@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wordle Clone</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: whitesmoke;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    nav {
+      width: 100%;
+      background: #f8f9fa;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    nav a {
+      text-decoration: none;
+      color: #333;
+      padding: 0.5rem 1rem;
+    }
+    header {
+      background-color: #cce7ff;
+      padding: 60px 20px;
+      text-align: center;
+      border-radius: 10px;
+      margin: 20px;
+      width: calc(100% - 40px);
+      max-width: 800px;
+    }
+    header h1 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+    header .subheading {
+      color: #555;
+    }
+    #game {
+      display: grid;
+      grid-template-columns: repeat(5, 60px);
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .tile {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      border: 2px solid #ccc;
+      background: #fff;
+      text-transform: uppercase;
+    }
+    .correct {
+      background: #6aaa64;
+      color: white;
+      border-color: #6aaa64;
+    }
+    .present {
+      background: #c9b458;
+      color: white;
+      border-color: #c9b458;
+    }
+    .absent {
+      background: #787c7e;
+      color: white;
+      border-color: #787c7e;
+    }
+    #keyboard button {
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    footer {
+      margin-top: 50px;
+      padding: 20px;
+      text-align: center;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="coolgame.html">Cool Game</a>
+    <a href="scratch.html">Scratch Page</a>
+  </nav>
+
+  <!-- Page Header -->
+  <header>
+    <h1>Let’s Play Wordle</h1>
+    <div class="subheading">Try and guess the mystery word just like you would on Wordle!</div>
+  </header>
+
+  <!-- Wordle Game -->
+  <h1>Wordle Clone</h1>
+  <div id="game"></div>
+  <div id="keyboard"></div>
+
+  <footer>
+    Annie Michaelis 2025
+  </footer>
+
+  <script>
+    const word = "GRADE";
+    let currentGuess = "";
+    let currentRow = 0;
+
+    const game = document.getElementById('game');
+    const keyboard = document.getElementById('keyboard');
+
+    // Create game board
+    for (let i = 0; i < 30; i++) {
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      game.appendChild(tile);
+    }
+
+    // Create keyboard
+    const keys = "QWERTYUIOPASDFGHJKLZXCVBNM".split("");
+    keys.forEach(key => {
+      const button = document.createElement('button');
+      button.textContent = key;
+      button.addEventListener('click', () => handleKey(key));
+      keyboard.appendChild(button);
+    });
+
+    const enterButton = document.createElement('button');
+    enterButton.textContent = 'Enter';
+    enterButton.addEventListener('click', submitGuess);
+    keyboard.appendChild(enterButton);
+
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Del';
+    deleteButton.addEventListener('click', deleteLetter);
+    keyboard.appendChild(deleteButton);
+
+    function handleKey(letter) {
+      if (currentGuess.length < 5) {
+        currentGuess += letter;
+        const tile = game.children[currentRow * 5 + currentGuess.length - 1];
+        tile.textContent = letter;
+      }
+    }
+
+    function deleteLetter() {
+      if (currentGuess.length > 0) {
+        const tile = game.children[currentRow * 5 + currentGuess.length - 1];
+        tile.textContent = "";
+        currentGuess = currentGuess.slice(0, -1);
+      }
+    }
+
+    function submitGuess() {
+      if (currentGuess.length !== 5) {
+        alert("Guess must be 5 letters!");
+        return;
+      }
+      for (let i = 0; i < 5; i++) {
+        const tile = game.children[currentRow * 5 + i];
+        const letter = currentGuess[i];
+        if (letter === word[i]) {
+          tile.classList.add('correct');
+        } else if (word.includes(letter)) {
+          tile.classList.add('present');
+        } else {
+          tile.classList.add('absent');
+        }
+      }
+      if (currentGuess === word) {
+        setTimeout(() => alert("You guessed it!"), 200);
+        return;
+      }
+      currentGuess = "";
+      currentRow++;
+      if (currentRow >= 6) {
+        setTimeout(() => alert(`Game Over! The word was ${word}.`), 200);
+      }
+    }
+  </script>
+</body>
+</html>
